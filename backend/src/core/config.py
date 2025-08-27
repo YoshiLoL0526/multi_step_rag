@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from pydantic import computed_field
+from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings
 
 
@@ -34,9 +34,15 @@ class Config(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return (
-            f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}"
+            f"postgresql://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}"
             f"@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
         )
+
+    # Security settings
+    SECRET_KEY: str = Field(...)
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
 
 settings = Config()

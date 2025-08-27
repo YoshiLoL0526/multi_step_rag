@@ -1,15 +1,10 @@
-from typing import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
 from src.core.config import settings
 
+engine = create_engine(settings.DATABASE_URL, echo=True)
 
-def get_db() -> Generator[Session, None]:
-    """
-    Yields a database session for use in async contexts.
-    """
-    engine = create_engine(settings.DATABASE_URL, echo=True)
-    session = sessionmaker(bind=engine, expire_on_commit=False)
-    with session() as session:
-        yield session
-    engine.dispose()
+
+def create_tables():
+    from src.models.base_model import Base
+
+    Base.metadata.create_all(engine)
