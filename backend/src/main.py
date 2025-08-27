@@ -17,9 +17,10 @@ def create_application() -> FastAPI:
     )
 
     # Include routers
-    from src.routers import misc, auth
+    from src.routers import misc, auth, documents
 
     app.include_router(misc.router, prefix=settings.PREFIX)
     app.include_router(auth.router, prefix=settings.PREFIX)
+    app.include_router(documents.router, prefix=settings.PREFIX)
 
     return app

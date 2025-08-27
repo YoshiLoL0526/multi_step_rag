@@ -44,5 +44,11 @@ class Config(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
+    # Upload settings
+    UPLOAD_DIR: Path = Path("uploads")
+    UPLOAD_DIR.mkdir(exist_ok=True)
+    ALLOWED_FILE_TYPES: list[str] = [".pdf", ".docx", ".txt", ".mp3", ".wav", ".m4a"]
+    MAX_FILE_SIZE_MB: int = 5 * 1024 * 1024 * 1024  # 5 GB
+
 
 settings = Config()

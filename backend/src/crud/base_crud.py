@@ -1,7 +1,6 @@
-from typing import Generic, TypeVar, Type, Optional, List, cast
+from typing import Generic, TypeVar, Type, Optional, List, cast, Dict, Any
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from sqlalchemy import Column
 from src.models.base_model import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -20,9 +19,17 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         query = self.session.query(self.model)
         return query.filter(getattr(self.model, "id") == id).first()
 
-    def get_all(self, skip: int = 0, limit: int = 100) -> List[ModelType]:
+    def get_all(
+        self, skip: int = 0, limit: int = 100, filters: Dict[str, Any] = {}
+    ) -> List[ModelType]:
         """Get all records with pagination."""
-        return self.session.query(self.model).offset(skip).limit(limit).all()
+        return (
+            self.session.query(self.model)
+            .filter_by(**filters)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     def create(self, obj_in: CreateSchemaType) -> ModelType:
         """Create a new record."""

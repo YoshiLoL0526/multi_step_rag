@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, DateTime
 from .base_model import Base
 
@@ -15,3 +16,5 @@ class User(Base):
     updated_at = Column(
         DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
     )
+
+    documents = relationship("Document", back_populates="owner")

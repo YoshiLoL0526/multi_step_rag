@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from src.core.db import engine
 from src.models.user_model import User
 from src.crud.user_crud import UserCRUD
+from src.crud.document_crud import DocumentCRUD
 from src.services.auth_service import AuthService
+from src.services.document_service import DocumentService
 from src.core.security import JWTBearer
 from src.core.config import settings
 
@@ -61,3 +63,29 @@ def get_current_user(
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+
+
+def get_document_crud(db: Session = Depends(get_db)):
+    return DocumentCRUD(db)
+
+
+DocumentCRUDDep = Annotated[DocumentCRUD, Depends(get_document_crud)]
+
+
+def get_document_service(
+    document_crud: DocumentCRUDDep,
+) -> DocumentService:
+    return DocumentService(document_crud=document_crud)
+
+
+DocumentServiceDep = Annotated[DocumentService, Depends(get_document_service)]
+
+
+def pagination_params(
+    skip: int = 0,
+    limit: int = 100,
+):
+    return {"skip": skip, "limit": limit}
+
+
+PaginationParamsDep = Annotated[dict, Depends(pagination_params)]
