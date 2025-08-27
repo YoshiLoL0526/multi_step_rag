@@ -13,8 +13,6 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType], session: Session):
         """Initialize CRUD with SQLAlchemy model."""
         self.model = model
-        if not hasattr(model, "id") or not isinstance(getattr(model, "id"), Column):
-            raise ValueError(f"Model {model.__name__} must have an 'id' Column")
         self.session = session
 
     def get_by_id(self, id: int) -> Optional[ModelType]:
