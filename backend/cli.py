@@ -1,12 +1,18 @@
 from typer import Typer, Option, secho, colors
 from sqlalchemy.orm import Session
 
+from src.core.db import create_tables
 from src.core.security import get_password_hash
 from src.models.user_model import User
 from src.dependencies import get_db
 
 
 app = Typer()
+
+
+@app.command()
+def init_db():
+    create_tables()
 
 
 @app.command()
