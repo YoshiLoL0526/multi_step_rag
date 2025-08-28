@@ -20,9 +20,12 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return query.filter(getattr(self.model, "id") == id).first()
 
     def get_all(
-        self, skip: int = 0, limit: int = 100, filters: Dict[str, Any] = {}
+        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
     ) -> List[ModelType]:
         """Get all records with pagination."""
+        if filters is None:
+            filters = {}
+
         return (
             self.session.query(self.model)
             .filter_by(**filters)
