@@ -34,7 +34,7 @@ class Config(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return (
-            f"postgresql://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}"
+            f"postgresql+psycopg2://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}"
             f"@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
         )
 
@@ -49,6 +49,9 @@ class Config(BaseSettings):
     UPLOAD_DIR.mkdir(exist_ok=True)
     ALLOWED_FILE_TYPES: list[str] = [".pdf", ".docx", ".txt", ".mp3", ".wav", ".m4a"]
     MAX_FILE_SIZE_MB: int = 5 * 1024 * 1024 * 1024  # 5 GB
+
+    # OpenAI settings
+    OPENAI_API_KEY: str = Field(...)
 
 
 settings = Config()

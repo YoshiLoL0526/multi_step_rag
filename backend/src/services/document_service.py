@@ -7,13 +7,22 @@ from src.models.user_model import User
 from src.models.document_model import Document
 from src.crud.document_crud import DocumentCRUD
 from src.schemas.document_schemas import DocumentCreate, DocumentUpdateRequest
+from src.services.document_processor import DocumentProcessor
 
 
 class DocumentService:
-    def __init__(self, document_crud: DocumentCRUD) -> None:
+    def __init__(
+        self, document_crud: DocumentCRUD, document_processor: DocumentProcessor
+    ) -> None:
         self.document_crud = document_crud
+        self.document_processor = document_processor
 
     def create_document(self, user: User, file: UploadFile) -> Document:
+        if not file.filename:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="No file uploaded"
+            )
+
         file_path = settings.UPLOAD_DIR / file.filename
 
         with file_path.open("wb") as buffer:
@@ -24,7 +33,17 @@ class DocumentService:
         )
         document = self.document_crud.create(obj_in=doc_create)
 
-        # process_file_task.delay(db_document.id, str(file_path))
+        # TODO: This should be in a background task
+        self.document_processor.process_document(
+            document=str(file_path),
+            metadata={
+                "document_id": document.id,
+                "owner_id": user.id,
+                "filename": file.filename,
+                "filetype": file.content_type,
+                "storage_path": str(file_path),
+            },
+        )
 
         return document
 
