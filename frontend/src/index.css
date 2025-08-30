@@ -1,1 +1,74 @@
 @import "tailwindcss";
+
+/* Define tus personalizaciones del tema */
+@theme {
+    /* -- Colores -- */
+    /* Se definen como --color-<nombre>-<tono> */
+    --color-primary-50: #f0f9ff;
+    --color-primary-100: #e0f2fe;
+    --color-primary-500: #0ea5e9;
+    --color-primary-600: #0284c7;
+    --color-primary-700: #0369a1;
+    --color-primary-900: #0c4a6e;
+
+    --color-neutral-50: #f9fafb;
+    --color-neutral-100: #f3f4f6;
+    --color-neutral-200: #e5e7eb;
+    --color-neutral-300: #d1d5db;
+    --color-neutral-400: #9ca3af;
+    --color-neutral-500: #6b7280;
+    --color-neutral-600: #4b5563;
+    --color-neutral-700: #374151;
+    --color-neutral-800: #1f2937;
+    --color-neutral-900: #111827;
+
+    --color-success-50: #f0fdf4;
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+
+    --color-error-50: #fef2f2;
+    --color-error-500: #ef4444;
+    --color-error-600: #dc2626;
+
+    --color-warning-50: #fffbeb;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+
+    /* -- Tipografía -- */
+    /* Se define como --font-<nombre> */
+    --font-sans: 'Inter', system-ui, sans-serif;
+
+    /* -- Sombras -- */
+    /* Se define como --shadow-<nombre> */
+    --shadow-soft: 0 2px 15px -3px rgb(0 0 0 / 0.07), 0 10px 20px -2px rgb(0 0 0 / 0.04);
+    --shadow-medium: 0 4px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+
+    /* -- Animaciones -- */
+    /* Se define como --animation-<nombre> */
+    --animation-fade-in: fadeIn 0.3s ease-in-out;
+    --animation-slide-in: slideIn 0.3s ease-out;
+}
+
+/* -- Keyframes -- */
+/* Se definen directamente en el CSS */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
