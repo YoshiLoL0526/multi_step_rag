@@ -1,6 +1,6 @@
-import { FileText, MessageSquare, Plus, Search } from 'lucide-react';
-import Button from '../ui/Button';
+import { FileText, MessageSquare, Search } from 'lucide-react';
 import Input from '../ui/Input';
+import DocumentsTab from '../documents/DocumentsTab';
 import { useResponsive } from '../../hooks/useResponsive';
 
 const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
@@ -20,13 +20,13 @@ const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
     ];
 
     const sidebarClasses = `
-    ${isMobile ? 'fixed inset-y-0 left-0 z-30' : 'relative'}
-    bg-white border-r border-neutral-200
-    ${isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}
-    transition-transform duration-300 ease-in-out
-    ${isMobile ? 'w-80' : 'w-80'}
-    flex flex-col
-  `.trim();
+        ${isMobile ? 'fixed inset-y-0 left-0 z-30' : 'relative'}
+        bg-white border-r border-neutral-200
+        ${isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}
+        transition-transform duration-300 ease-in-out
+        ${isMobile ? 'w-80' : 'w-80'}
+        flex flex-col
+    `.trim();
 
     return (
         <>
@@ -67,12 +67,12 @@ const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
                                 key={tab.id}
                                 onClick={() => onTabChange(tab.id)}
                                 className={`
-                  flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 transition-colors
-                  ${activeTab === tab.id
+                                    flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 transition-colors
+                                    ${activeTab === tab.id
                                         ? 'border-primary-500 text-primary-600 bg-primary-50'
                                         : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
                                     }
-                `}
+                                `}
                             >
                                 <Icon className="h-4 w-4" />
                                 <span className="hidden sm:block">{tab.name}</span>
@@ -81,28 +81,8 @@ const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
                     })}
                 </div>
 
-                {/* Action button */}
-                <div className="p-4 border-b border-neutral-200">
-                    <Button
-                        variant="primary"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => {
-                            // TODO: Implement based on active tab
-                            if (activeTab === 'documents') {
-                                console.log('Upload document');
-                            } else {
-                                console.log('New conversation');
-                            }
-                        }}
-                    >
-                        <Plus className="h-4 w-4 mr-2" />
-                        {activeTab === 'documents' ? 'Subir documento' : 'Nueva conversación'}
-                    </Button>
-                </div>
-
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-hidden">
                     {activeTab === 'documents' ? (
                         <DocumentsTab />
                     ) : (
@@ -114,21 +94,7 @@ const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
     );
 };
 
-// Placeholder components for tabs
-const DocumentsTab = () => {
-    return (
-        <div className="p-4">
-            <div className="text-center text-neutral-500 py-8">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-neutral-300" />
-                <p className="text-sm">No hay documentos subidos</p>
-                <p className="text-xs text-neutral-400 mt-1">
-                    Sube tu primer documento para comenzar
-                </p>
-            </div>
-        </div>
-    );
-};
-
+// Placeholder para el tab de conversaciones
 const ConversationsTab = () => {
     return (
         <div className="p-4">
