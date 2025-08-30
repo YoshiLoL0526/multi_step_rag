@@ -18,3 +18,4 @@ class User(Base):
     )
 
     documents = relationship("Document", back_populates="owner")
+    conversations = relationship("Conversation", back_populates="owner")

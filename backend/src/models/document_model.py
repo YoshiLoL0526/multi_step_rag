@@ -32,3 +32,4 @@ class Document(Base):
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     owner = relationship("User", back_populates="documents")
+    conversations = relationship("Conversation", back_populates="document")

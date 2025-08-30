@@ -7,15 +7,15 @@ from src.models.user_model import User
 from src.models.document_model import Document
 from src.crud.document_crud import DocumentCRUD
 from src.schemas.document_schemas import DocumentCreate, DocumentUpdateRequest
-from src.services.document_processor import DocumentProcessor
+from src.services.vectorization_service import VectorizationService
 
 
 class DocumentService:
     def __init__(
-        self, document_crud: DocumentCRUD, document_processor: DocumentProcessor
+        self, document_crud: DocumentCRUD, vectorization_service: VectorizationService
     ) -> None:
         self.document_crud = document_crud
-        self.document_processor = document_processor
+        self.vectorization_service = vectorization_service
 
     def create_document(self, user: User, file: UploadFile) -> Document:
         if not file.filename:
@@ -34,14 +34,12 @@ class DocumentService:
         document = self.document_crud.create(obj_in=doc_create)
 
         # TODO: This should be in a background task
-        self.document_processor.process_document(
-            document=str(file_path),
+        self.vectorization_service.process_and_store_document(
+            file_path=str(file_path),
             metadata={
                 "document_id": document.id,
                 "owner_id": user.id,
                 "filename": file.filename,
-                "filetype": file.content_type,
-                "storage_path": str(file_path),
             },
         )
 
@@ -64,6 +62,7 @@ class DocumentService:
 
     def delete_document(self, user: User, document_id: int) -> Document:
         document = self.get_document(user=user, document_id=document_id)
+        self.vectorization_service.delete_document_vectors(document_id)
         deleted_document = self.document_crud.delete(db_obj=document)
         if deleted_document is None:
             raise HTTPException(

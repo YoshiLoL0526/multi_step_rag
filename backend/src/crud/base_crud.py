@@ -20,19 +20,28 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return query.filter(getattr(self.model, "id") == id).first()
 
     def get_all(
-        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        filters: Optional[Dict[str, Any]] = None,
+        order_by: Optional[str] = None,
+        desc: bool = False,
     ) -> List[ModelType]:
         """Get all records with pagination."""
         if filters is None:
             filters = {}
 
-        return (
-            self.session.query(self.model)
-            .filter_by(**filters)
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
+        query = self.session.query(self.model).filter_by(**filters)
+
+        if order_by:
+            if hasattr(self.model, order_by):
+                order_field = getattr(self.model, order_by)
+                if desc:
+                    query = query.order_by(order_field.desc())
+                else:
+                    query = query.order_by(order_field)
+
+        return query.offset(skip).limit(limit).all()
 
     def create(self, obj_in: CreateSchemaType) -> ModelType:
         """Create a new record."""
