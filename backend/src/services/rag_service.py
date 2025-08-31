@@ -27,7 +27,6 @@ class RagService:
 
         docs = self.load_docs(message=message, document_id=document_id, k=5)
         context = "\n".join([doc.page_content for doc in docs])
-        print(context)
 
         system_prompt_fmt = system_prompt.format(context=context)
 

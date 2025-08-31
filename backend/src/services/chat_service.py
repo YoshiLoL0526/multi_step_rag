@@ -83,7 +83,10 @@ class ChatService:
         history = [
             msg.content
             for msg in self.message_crud.get_all(
-                limit=10, filters={"role": Role.USER}, order_by="created_at", desc=True
+                limit=10,
+                filters={"conversation_id": conversation_id, "role": Role.USER},
+                order_by="created_at",
+                desc=False,
             )
         ]
 
@@ -98,4 +101,4 @@ class ChatService:
         )
         message = self.message_crud.create(obj_in=resp_obj_in)
 
-        return response
+        return message
