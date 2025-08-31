@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AppProvider } from './contexts/AppContext'
 import LoginPage from './pages/LoginPage';
 import ChatPage from './pages/ChatPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -50,11 +51,13 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
-          <div className="App">
-            <AppRoutes />
-          </div>
-        </Router>
+        <AppProvider>
+          <Router>
+            <div className="App">
+              <AppRoutes />
+            </div>
+          </Router>
+        </AppProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

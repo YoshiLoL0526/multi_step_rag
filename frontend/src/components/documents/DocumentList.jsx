@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { FileText, MoreVertical, Download, Edit2, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { useAppContext } from '../../contexts/AppContext';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import Modal from '../ui/Modal';
 import LoadingSpinner from '../ui/LoadingSpinner';
 
 const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
+    const { selectedDocumentId, setSelectedDocumentId } = useAppContext();
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [actionLoading, setActionLoading] = useState(null);
@@ -47,11 +49,21 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
         });
     };
 
+    const handleDocumentSelect = (document) => {
+        setSelectedDocumentId(document.id);
+    };
+
     const handleDelete = async () => {
         if (!selectedDocument) return;
 
         setActionLoading('delete');
         await onDelete(selectedDocument.id);
+
+        // Si el documento eliminado era el seleccionado, deseleccionar
+        if (selectedDocumentId === selectedDocument.id) {
+            setSelectedDocumentId(null);
+        }
+
         setActionLoading(null);
         setShowDeleteModal(false);
         setSelectedDocument(null);
@@ -83,12 +95,29 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
                 {documents.map((document) => (
                     <div
                         key={document.id}
-                        className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                        className={`
+                            bg-white border rounded-lg p-4 hover:shadow-sm transition-all cursor-pointer
+                            ${selectedDocumentId === document.id
+                                ? 'border-primary-500 bg-primary-50 shadow-sm'
+                                : 'border-neutral-200'
+                            }
+                        `}
+                        onClick={() => handleDocumentSelect(document)}
                     >
                         <div className="flex items-start justify-between">
                             <div className="flex items-start space-x-3 flex-1 min-w-0">
-                                <div className="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <FileText className="h-5 w-5 text-primary-600" />
+                                <div className={`
+                                    h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0
+                                    ${selectedDocumentId === document.id
+                                        ? 'bg-primary-600'
+                                        : 'bg-primary-100'
+                                    }
+                                    }
+                                `}>
+                                    <FileText className={`h-5 w-5 ${selectedDocumentId === document.id
+                                            ? 'text-white'
+                                            : 'text-primary-600'
+                                        }`} />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
@@ -124,9 +153,12 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => setSelectedDocument(
-                                        selectedDocument?.id === document.id ? null : document
-                                    )}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedDocument(
+                                            selectedDocument?.id === document.id ? null : document
+                                        );
+                                    }}
                                     className="p-1"
                                 >
                                     <MoreVertical className="h-4 w-4" />

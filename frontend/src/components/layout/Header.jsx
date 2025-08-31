@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, X, User, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import Button from '../ui/Button';
 
 const Header = ({ onToggleSidebar, isSidebarOpen, isMobile }) => {

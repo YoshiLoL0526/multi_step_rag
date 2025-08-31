@@ -1,6 +1,7 @@
 import { FileText, MessageSquare, Search } from 'lucide-react';
 import Input from '../ui/Input';
 import DocumentsTab from '../documents/DocumentsTab';
+import ConversationsTab from '../chat/ConversationsTab';
 import { useResponsive } from '../../hooks/useResponsive';
 
 const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
@@ -83,29 +84,11 @@ const Sidebar = ({ isOpen, onClose, activeTab, onTabChange }) => {
 
                 {/* Content */}
                 <div className="flex-1 overflow-hidden">
-                    {activeTab === 'documents' ? (
-                        <DocumentsTab />
-                    ) : (
-                        <ConversationsTab />
-                    )}
+                    {activeTab === 'documents' && <DocumentsTab />}
+                    {activeTab === 'conversations' && <ConversationsTab />}
                 </div>
             </div>
         </>
-    );
-};
-
-// Placeholder para el tab de conversaciones
-const ConversationsTab = () => {
-    return (
-        <div className="p-4">
-            <div className="text-center text-neutral-500 py-8">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 text-neutral-300" />
-                <p className="text-sm">No hay conversaciones</p>
-                <p className="text-xs text-neutral-400 mt-1">
-                    Inicia tu primera conversación
-                </p>
-            </div>
-        </div>
     );
 };
 
