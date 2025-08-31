@@ -84,7 +84,7 @@ class ChatService:
             msg.content
             for msg in self.message_crud.get_all(
                 limit=10,
-                filters={"conversation_id": conversation_id, "role": Role.USER},
+                filters={"conversation_id": conversation_id},
                 order_by="created_at",
                 desc=False,
             )
