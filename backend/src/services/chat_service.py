@@ -99,8 +99,3 @@ class ChatService:
         message = self.message_crud.create(obj_in=resp_obj_in)
 
         return response
-
-    def delete_conversation(self, user: User, conversation_id: int):
-        conversation = self.get_conversation(user=user, conversation_id=conversation_id)
-        conversation = self.conversation_crud.delete(conversation)
-        return conversation
