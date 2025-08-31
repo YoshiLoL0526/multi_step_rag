@@ -4,9 +4,13 @@ from fastapi import HTTPException, UploadFile, status
 
 from src.core.config import settings
 from src.models.user_model import User
-from src.models.document_model import Document
+from src.models.document_model import Document, DocumentStatus
 from src.crud.document_crud import DocumentCRUD
-from src.schemas.document_schemas import DocumentCreate, DocumentUpdateRequest
+from src.schemas.document_schemas import (
+    DocumentCreate,
+    DocumentUpdate,
+    DocumentUpdateRequest,
+)
 from src.services.vectorization_service import VectorizationService
 
 
@@ -42,6 +46,9 @@ class DocumentService:
                 "filename": file.filename,
             },
         )
+
+        obj_in = DocumentUpdate(status=DocumentStatus.COMPLETED)
+        self.document_crud.update(document, obj_in)
 
         return document
 
