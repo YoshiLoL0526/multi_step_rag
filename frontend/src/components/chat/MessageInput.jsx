@@ -39,7 +39,7 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
 
     return (
         <div className="bg-white border-t border-neutral-200 p-4">
-            <form onSubmit={handleSubmit} className="flex items-end space-x-3">
+            <form onSubmit={handleSubmit} className="flex items-center space-x-3">
                 {/* File upload button (placeholder for future implementation) */}
                 <Button
                     type="button"
@@ -58,7 +58,7 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
                         ref={textareaRef}
                         value={message}
                         onChange={handleTextareaChange}
-                        onKeyPress={handleKeyPress}
+                        onKeyUp={handleKeyPress}
                         placeholder={disabled ? "Selecciona una conversación para comenzar..." : "Escribe tu mensaje aquí..."}
                         disabled={disabled || sendingMessage}
                         className="w-full px-3 py-2 border border-neutral-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-neutral-100 disabled:cursor-not-allowed"

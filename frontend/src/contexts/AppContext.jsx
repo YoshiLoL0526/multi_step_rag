@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
@@ -14,13 +14,29 @@ export const AppProvider = ({ children }) => {
     const [selectedDocumentId, setSelectedDocumentId] = useState(null);
     const [activeConversationId, setActiveConversationId] = useState(null);
 
+    useEffect(() => {
+        if (selectedDocumentId) {
+            setActiveConversationId(null);
+        }
+    }, [selectedDocumentId]);
+
+    const selectDocument = (documentId) => {
+        setSelectedDocumentId(documentId);
+    };
+
+    const selectConversation = (conversationId) => {
+        setActiveConversationId(conversationId);
+    };
+
     return (
         <AppContext.Provider
             value={{
                 selectedDocumentId,
                 setSelectedDocumentId,
+                selectDocument,
                 activeConversationId,
                 setActiveConversationId,
+                selectConversation,
             }}
         >
             {children}

@@ -20,14 +20,14 @@ const Layout = ({ children }) => {
     };
 
     return (
-        <div className="min-h-screen bg-neutral-50">
+        <div className="h-screen bg-neutral-50 flex flex-col overflow-hidden">
             <Header
                 onToggleSidebar={toggleSidebar}
                 isSidebarOpen={isSidebarOpen}
                 isMobile={isMobile}
             />
 
-            <div className="flex h-[calc(100vh-4rem)]">
+            <div className="flex flex-1 min-h-0">
                 <Sidebar
                     isOpen={isSidebarOpen}
                     onClose={() => setIsSidebarOpen(false)}
@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
                     onTabChange={handleTabChange}
                 />
 
-                <main className="flex-1 overflow-hidden">
+                <main className="flex-1 min-w-0 overflow-hidden">
                     {children}
                 </main>
             </div>

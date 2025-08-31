@@ -44,23 +44,6 @@ const ChatContainer = () => {
     return (
         <div className="h-full flex">
             <div className="flex-1 flex flex-col">
-                {/* Header del chat */}
-                <div className="bg-white border-b border-neutral-200 px-6 py-4">
-                    <div className="flex items-center space-x-3">
-                        <div className="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                            <MessageSquare className="h-5 w-5 text-primary-600" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold text-neutral-900">
-                                {activeConversation.title}
-                            </h3>
-                            <p className="text-sm text-neutral-500">
-                                ID: {activeConversation.id}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Error display */}
                 {error && (
                     <div className="bg-error-50 border-b border-error-200 px-6 py-3">

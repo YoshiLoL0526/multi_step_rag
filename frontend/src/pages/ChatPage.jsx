@@ -1,10 +1,10 @@
 import Layout from '../components/layout/Layout';
-import ChatContainer from '../components/chat/ChatContainer';
+import ChatLayout from '../components/chat/ChatLayout';
 
 const ChatPage = () => {
     return (
         <Layout>
-            <ChatContainer />
+            <ChatLayout />
         </Layout>
     );
 };
