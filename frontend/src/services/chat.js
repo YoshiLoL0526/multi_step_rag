@@ -11,6 +11,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al obtener conversaciones',
             };
         }
@@ -26,6 +27,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al crear conversación',
             };
         }
@@ -38,6 +40,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al obtener conversación',
             };
         }
@@ -50,6 +53,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al eliminar conversación',
             };
         }
@@ -64,6 +68,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al obtener mensajes',
             };
         }
@@ -78,6 +83,7 @@ export const chatService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al enviar mensaje',
             };
         }

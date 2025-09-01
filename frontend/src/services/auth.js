@@ -18,6 +18,7 @@ export const authService = {
         } catch (error) {
             return {
                 success: false,
+                stauts: error.response.status,
                 error: error.response?.data?.detail || 'Error de autenticación',
             };
         }
@@ -35,6 +36,7 @@ export const authService = {
         } catch (error) {
             return {
                 success: false,
+                stauts: error.response.status,
                 error: error.response?.data?.detail || 'Error al obtener usuario',
             };
         }

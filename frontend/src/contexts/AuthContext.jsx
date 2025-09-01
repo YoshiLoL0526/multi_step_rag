@@ -1,9 +1,10 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
 import { authService } from '../services/auth';
+import { useErrorHandler } from '../hooks/useErrorHandler'
+import { useNotifications } from './NotificationContext';
 
 const AuthContext = createContext();
 
-// Reducer para manejar el estado de autenticación
 const authReducer = (state, action) => {
     switch (action.type) {
         case 'LOGIN_START':
@@ -61,8 +62,9 @@ const initialState = {
 
 export const AuthProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, initialState);
+    const { handleError } = useErrorHandler();
+    const { showSuccess } = useNotifications();
 
-    // Verificar autenticación al cargar la app
     useEffect(() => {
         const checkAuth = async () => {
             if (authService.isAuthenticated()) {
@@ -70,11 +72,11 @@ export const AuthProvider = ({ children }) => {
                 if (storedUser) {
                     dispatch({ type: 'SET_USER', payload: { user: storedUser } });
                 } else {
-                    // Verificar con el servidor si el token es válido
                     const result = await authService.getCurrentUser();
                     if (result.success) {
                         dispatch({ type: 'SET_USER', payload: { user: result.data } });
                     } else {
+                        handleError(result, 'Error de autenticación')
                         authService.logout();
                     }
                 }
@@ -90,7 +92,6 @@ export const AuthProvider = ({ children }) => {
         const result = await authService.login(email, password);
 
         if (result.success) {
-            // Obtener datos del usuario después del login
             const userResult = await authService.getCurrentUser();
             if (userResult.success) {
                 dispatch({
@@ -106,6 +107,7 @@ export const AuthProvider = ({ children }) => {
                 return { success: false, error: userResult.error };
             }
         } else {
+            handleError(result, 'Error de autenticación')
             dispatch({
                 type: 'LOGIN_FAILURE',
                 payload: { error: result.error }

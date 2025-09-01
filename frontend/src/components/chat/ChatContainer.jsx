@@ -1,7 +1,6 @@
 import { useChat } from '../../hooks/useChat';
 import MessagesList from './MessagesList';
 import MessageInput from './MessageInput';
-import Button from '../ui/Button';
 import { MessageSquare } from 'lucide-react';
 
 const ChatContainer = () => {
@@ -10,9 +9,7 @@ const ChatContainer = () => {
         messages,
         loading,
         sendingMessage,
-        error,
         sendMessage,
-        clearError
     } = useChat();
 
     const handleSendMessage = async (content) => {
@@ -42,23 +39,6 @@ const ChatContainer = () => {
     return (
         <div className="h-full flex">
             <div className="flex-1 flex flex-col">
-                {/* Error display */}
-                {error && (
-                    <div className="bg-error-50 border-b border-error-200 px-6 py-3">
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm text-error-700">{error}</p>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={clearError}
-                                className="text-error-700 hover:text-error-800"
-                            >
-                                Cerrar
-                            </Button>
-                        </div>
-                    </div>
-                )}
-
                 {/* Messages area */}
                 <MessagesList
                     messages={messages}

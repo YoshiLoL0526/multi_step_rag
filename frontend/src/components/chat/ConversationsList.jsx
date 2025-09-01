@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { MessageSquare, Trash2, MoreVertical } from 'lucide-react';
 import LoadingSpinner from '../ui/LoadingSpinner';
+import { useModalActions } from '../../hooks/useModalActions';
+import Button from '../ui/Button'
 
 const ConversationsList = ({
     conversations,
@@ -10,13 +12,62 @@ const ConversationsList = ({
     loading
 }) => {
     const [menuOpen, setMenuOpen] = useState(null);
+    const { showConfirmDialog, closeModal } = useModalActions();
+
+    const handleConfirmDelete = useCallback(async (conversationId, modalId) => {
+        if (!conversationId) return;
+
+        await onDeleteConversation(conversationId);
+
+        if (activeConversationId === conversationId) {
+            onSelectConversation(null);
+        }
+
+        closeModal(modalId);
+    }, [activeConversationId, closeModal, onDeleteConversation, onSelectConversation]);
 
     const handleDelete = async (conversationId, e) => {
         e.stopPropagation();
-        if (window.confirm('¿Estás seguro de que quieres eliminar esta conversación?')) {
-            await onDeleteConversation(conversationId);
-        }
         setMenuOpen(null);
+
+        const modalId = showConfirmDialog({
+            title: 'Confirmar eliminación',
+            content: (
+                <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 w-10 h-10 bg-error-100 rounded-full flex items-center justify-center">
+                            <Trash2 className="h-5 w-5 text-error-600" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-sm font-medium text-neutral-900 mb-1">
+                                ¿Eliminar conversación?
+                            </h3>
+                            <p className="text-sm text-neutral-600">
+                                Eliminarás permanentemente la conversación.
+                                Esta acción no se puede deshacer.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end space-x-3">
+                        <Button
+                            variant="ghost"
+                            onClick={() => closeModal(modalId)}
+                            disabled={loading}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={() => handleConfirmDelete(conversationId, modalId)}
+                            loading={loading}
+                        >
+                            Eliminar
+                        </Button>
+                    </div>
+                </div>
+            )
+        });
     };
 
     const formatTitle = (title) => {
@@ -51,8 +102,8 @@ const ConversationsList = ({
                                 className={`
                                     group relative flex items-center p-3 rounded-lg cursor-pointer transition-colors
                                     ${activeConversationId === conversation.id
-                                        ? 'bg-primary-100 border border-primary-200'
-                                        : 'hover:bg-neutral-50 border border-transparent'
+                                        ? 'border-primary-500 bg-primary-50 shadow-sm ring-2 ring-primary-200'
+                                        : 'border-neutral-200 hover:border-neutral-300'
                                     }
                                 `}
                                 onClick={() => onSelectConversation(conversation.id)}

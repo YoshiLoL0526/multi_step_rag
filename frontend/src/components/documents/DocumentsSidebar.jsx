@@ -1,23 +1,21 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import Button from '../ui/Button';
-import Modal from '../ui/Modal';
 import DocumentUpload from './DocumentUpload';
 import DocumentList from './DocumentList';
 import { useDocuments } from '../../hooks/useDocuments';
+import { useModalActions } from '../../hooks/useModalActions';
 
-const DocumentsTab = () => {
+const DocumentsSidebar = () => {
     const {
         documents,
         loading,
-        error,
         uploadDocument,
         deleteDocument,
         updateDocument,
-        clearError,
     } = useDocuments();
 
-    const [showUploadModal, setShowUploadModal] = useState(false);
+    const { showUploadModal, closeModal } = useModalActions();
     const [uploading, setUploading] = useState(false);
 
     const handleUpload = async (file, onProgress) => {
@@ -26,10 +24,21 @@ const DocumentsTab = () => {
         setUploading(false);
 
         if (result.success) {
-            setShowUploadModal(false);
+            closeModal();
         }
 
         return result;
+    };
+
+    const handleShowUploadModal = () => {
+        const modalId = showUploadModal({
+            content: (
+                <DocumentUpload
+                    onUpload={handleUpload}
+                    loading={uploading}
+                />
+            )
+        });
     };
 
     const handleDelete = async (documentId) => {
@@ -48,7 +57,7 @@ const DocumentsTab = () => {
                     variant="primary"
                     size="sm"
                     className="w-full"
-                    onClick={() => setShowUploadModal(true)}
+                    onClick={handleShowUploadModal}
                 >
                     <Plus className="h-4 w-4 mr-2" />
                     Subir documento
@@ -57,18 +66,6 @@ const DocumentsTab = () => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4">
-                {error && (
-                    <div className="mb-4 p-3 bg-error-50 border border-error-200 rounded-lg">
-                        <p className="text-sm text-error-600">{error}</p>
-                        <button
-                            onClick={clearError}
-                            className="text-xs text-error-500 hover:text-error-700 mt-1"
-                        >
-                            Cerrar
-                        </button>
-                    </div>
-                )}
-
                 <DocumentList
                     documents={documents}
                     loading={loading}
@@ -76,21 +73,8 @@ const DocumentsTab = () => {
                     onUpdate={handleUpdate}
                 />
             </div>
-
-            {/* Upload Modal */}
-            <Modal
-                isOpen={showUploadModal}
-                onClose={() => !uploading && setShowUploadModal(false)}
-                title="Subir nuevo documento"
-                size="lg"
-            >
-                <DocumentUpload
-                    onUpload={handleUpload}
-                    loading={uploading}
-                />
-            </Modal>
         </div>
     );
 };
 
-export default DocumentsTab;
+export default DocumentsSidebar;

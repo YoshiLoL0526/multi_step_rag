@@ -1,38 +1,31 @@
-import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useChat } from '../../hooks/useChat';
 import Button from '../ui/Button';
-import Modal from '../ui/Modal';
-import Input from '../ui/Input';
 import ConversationsList from './ConversationsList';
+import { useModalActions } from '../../hooks/useModalActions';
+import ConversationForm from './ConversationForm'
 
 const ConversationsSidebar = () => {
     const {
         conversations,
         activeConversationId,
-        error,
         createConversation,
         selectConversation,
         deleteConversation,
-        clearError,
         loading
     } = useChat();
 
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [creating, setCreating] = useState(false);
-    const [newTitle, setNewTitle] = useState('');
+    const { showConfirmDialog, closeModal } = useModalActions();
 
-    const handleCreate = async () => {
-        if (!newTitle.trim()) return;
-
-        setCreating(true);
-        const result = await createConversation(newTitle.trim());
-        setCreating(false);
-
-        if (result) {
-            setShowCreateModal(false);
-            setNewTitle('');
-        }
+    const handleShowCreateModal = () => {
+        const modalId = showConfirmDialog({
+            content: (
+                <ConversationForm
+                    createConversation={createConversation}
+                    onClose={() => closeModal(modalId)}
+                />
+            )
+        });
     };
 
     return (
@@ -50,27 +43,12 @@ const ConversationsSidebar = () => {
                     variant="primary"
                     size="sm"
                     className="w-full"
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={handleShowCreateModal}
                 >
                     <Plus className="h-4 w-4 mr-2" />
                     Nueva conversación
                 </Button>
             </div>
-
-            {/* Error display */}
-            {error && (
-                <div className="mx-4 mt-4 p-3 bg-error-50 border border-error-200 rounded-lg">
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-error-600">{error}</p>
-                        <button
-                            onClick={clearError}
-                            className="text-error-500 hover:text-error-700"
-                        >
-                            <X className="h-4 w-4" />
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* Conversations list */}
             <ConversationsList
@@ -80,42 +58,6 @@ const ConversationsSidebar = () => {
                 onDeleteConversation={deleteConversation}
                 loading={loading}
             />
-
-            {/* Create conversation modal */}
-            <Modal
-                isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                title="Nueva Conversación"
-                size="md"
-            >
-                <div className="space-y-4">
-                    <Input
-                        label="Título de la conversación"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        placeholder="Ej: Preguntas sobre el capítulo 3"
-                        required
-                    />
-
-                    <div className="flex justify-end space-x-3">
-                        <Button
-                            variant="ghost"
-                            onClick={() => setShowCreateModal(false)}
-                            disabled={creating}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={handleCreate}
-                            loading={creating}
-                            disabled={!newTitle.trim()}
-                        >
-                            Crear Conversación
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

@@ -9,6 +9,7 @@ export const documentsService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al obtener documentos',
             };
         }
@@ -39,6 +40,7 @@ export const documentsService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al subir documento',
             };
         }
@@ -51,6 +53,7 @@ export const documentsService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al obtener documento',
             };
         }
@@ -63,6 +66,7 @@ export const documentsService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al actualizar documento',
             };
         }
@@ -75,6 +79,7 @@ export const documentsService = {
         } catch (error) {
             return {
                 success: false,
+                status: error.response?.status,
                 error: error.response?.data?.detail || 'Error al eliminar documento',
             };
         }
