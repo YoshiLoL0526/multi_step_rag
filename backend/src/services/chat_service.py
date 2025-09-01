@@ -80,20 +80,26 @@ class ChatService:
         )
         message = self.message_crud.create(obj_in=obj_in)
 
-        history = [
-            msg.content
-            for msg in self.message_crud.get_all(
-                limit=10,
-                filters={"conversation_id": conversation_id},
-                order_by="created_at",
-                desc=False,
+        history = list(
+            reversed(
+                [
+                    msg.content
+                    for msg in self.message_crud.get_all(
+                        limit=10,
+                        filters={"conversation_id": conversation_id},
+                        order_by="created_at",
+                        desc=True,
+                    )
+                ]
             )
-        ]
+        )
+
+        document = self.document_crud.get_by_id(conversation.document_id)
 
         response = self.rag_service.rag_query(
             message=message.content,
             history=history,
-            document_id=conversation.document.id,
+            document=document,
         )
 
         resp_obj_in = MessageCreate(

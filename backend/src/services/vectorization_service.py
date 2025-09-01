@@ -23,7 +23,13 @@ class VectorizationService:
         for idx, chunk in enumerate(chunks, start=1):
             chunk.metadata = metadata
             chunk.metadata["chunk_idx"] = idx
-        self.vector_store.add_documents(chunks)
+        
+        # Embed documents in chunks because OpenAI limitation
+        step = 300_000 // 1_000
+        i = 0
+        while i < len(chunks):
+            self.vector_store.add_documents(chunks[i : min(i + step, len(chunks))])
+            i += step
 
     def search_similar_documents(
         self, query: str, document_id: Optional[int], k: int = 5

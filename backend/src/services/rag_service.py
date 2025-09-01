@@ -1,8 +1,9 @@
-from typing import Any, List, Dict
+from typing import List
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from src.models.document_model import Document
 from src.services.vectorization_service import VectorizationService
 from src.core.config import settings
 
@@ -19,16 +20,29 @@ class RagService:
             query=message, document_id=document_id, k=k
         )
 
-    def rag_query(self, message: str, history: List[str], document_id: int):
-        system_prompt = """You are an assistant for document analysis tasks.
-        Use the following pieces of retrieved context to answer the question.
-        If you can't inhere the response let it clear.
-        Context: {context}:"""
+    def rag_query(self, message: str, history: List[str], document: Document):
+        system_prompt = """Actúa como un asistente amigable. Tu objetivo principal es ayudar a los usuarios a encontrar respuestas dentro de sus documentos.
 
-        docs = self.load_docs(message=message, document_id=document_id, k=5)
+        Sigue estas reglas estrictamente:
+        1.  **Basa tu respuesta 100% en el contexto.** No inventes información ni utilices conocimiento externo.
+        2.  **Si la respuesta no está en el contexto,** déjalo claro amablemente"
+        3.  **Sé directo:** Comienza tu respuesta abordando directamente la pregunta del usuario.
+        4.  **Ten en cuenta el historial:** Utiliza el historial de la conversación para entender el contexto de preguntas de seguimiento.
+        5.  **Mejora la legibilidad:** Usa formato markdown (como **negritas** o listas) para que tus respuestas sean fáciles de leer.
+
+        Metadatos del documento:
+        {metadata}
+
+        Contexto relevante del documento:
+        {context}
+        """
+
+        docs = self.load_docs(message=message, document_id=document.id, k=10)
         context = "\n".join([doc.page_content for doc in docs])
 
-        system_prompt_fmt = system_prompt.format(context=context)
+        metadata = f"Filename: {document.filename}"
+
+        system_prompt_fmt = system_prompt.format(context=context, metadata=metadata)
 
         messages = [
             SystemMessage(content=system_prompt_fmt),
