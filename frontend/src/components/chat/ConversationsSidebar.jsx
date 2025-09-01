@@ -1,27 +1,26 @@
 import { useState } from 'react';
-import { Plus, MessageSquare, Trash2, MoreVertical } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { useChat } from '../../hooks/useChat';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
-import LoadingSpinner from '../ui/LoadingSpinner';
+import ConversationsList from './ConversationsList';
 
 const ConversationsSidebar = () => {
     const {
         conversations,
-        activeConversation,
-        loading,
+        activeConversationId,
         error,
         createConversation,
         selectConversation,
         deleteConversation,
         clearError,
+        loading
     } = useChat();
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [creating, setCreating] = useState(false);
     const [newTitle, setNewTitle] = useState('');
-    const [menuOpen, setMenuOpen] = useState(null);
 
     const handleCreate = async () => {
         if (!newTitle.trim()) return;
@@ -34,23 +33,6 @@ const ConversationsSidebar = () => {
             setShowCreateModal(false);
             setNewTitle('');
         }
-    };
-
-    const handleDelete = async (conversationId, e) => {
-        e.stopPropagation();
-        if (window.confirm('¿Estás seguro de que quieres eliminar esta conversación?')) {
-            await deleteConversation(conversationId);
-        }
-        setMenuOpen(null);
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('es-ES', {
-            day: 'numeric',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
     };
 
     return (
@@ -91,86 +73,13 @@ const ConversationsSidebar = () => {
             )}
 
             {/* Conversations list */}
-            <div className="flex-1 overflow-y-auto p-4">
-                {loading ? (
-                    <div className="flex justify-center py-8">
-                        <LoadingSpinner />
-                    </div>
-                ) : conversations.length === 0 ? (
-                    <div className="text-center py-8">
-                        <MessageSquare className="h-8 w-8 mx-auto mb-3 text-neutral-300" />
-                        <p className="text-sm text-neutral-500 mb-1">No hay conversaciones</p>
-                        <p className="text-xs text-neutral-400">
-                            Crea tu primera conversación con este documento
-                        </p>
-                    </div>
-                ) : (
-                    <div className="space-y-2">
-                        {conversations.map((conversation) => (
-                            <div
-                                key={conversation.id}
-                                className={`
-                                    group relative p-3 rounded-lg cursor-pointer transition-all
-                                    ${activeConversation?.id === conversation.id
-                                        ? 'bg-primary-100 border border-primary-200 shadow-sm'
-                                        : 'hover:bg-neutral-50 border border-transparent'
-                                    }
-                                `}
-                                onClick={() => selectConversation(conversation)}
-                            >
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="text-sm font-medium text-neutral-900 truncate mb-1">
-                                            {conversation.title}
-                                        </h4>
-                                        <p className="text-xs text-neutral-500">
-                                            {formatDate(conversation.created_at)}
-                                        </p>
-                                        {conversation.last_message && (
-                                            <p className="text-xs text-neutral-400 mt-1 line-clamp-2">
-                                                {conversation.last_message}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="ml-2">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setMenuOpen(menuOpen === conversation.id ? null : conversation.id);
-                                            }}
-                                            className="p-1 rounded hover:bg-neutral-200 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <MoreVertical className="h-4 w-4 text-neutral-400" />
-                                        </button>
-
-                                        {menuOpen === conversation.id && (
-                                            <>
-                                                <div
-                                                    className="fixed inset-0 z-10"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setMenuOpen(null);
-                                                    }}
-                                                />
-                                                <div className="absolute right-0 top-8 z-20 bg-white border border-neutral-200 rounded-lg shadow-lg py-1 min-w-[120px]">
-                                                    <button
-                                                        onClick={(e) => handleDelete(conversation.id, e)}
-                                                        className="flex items-center w-full px-3 py-2 text-sm text-error-600 hover:bg-error-50"
-                                                    >
-                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                        Eliminar
-                                                    </button>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+            <ConversationsList
+                conversations={conversations}
+                activeConversationId={activeConversationId}
+                onSelectConversation={selectConversation}
+                onDeleteConversation={deleteConversation}
+                loading={loading}
+            />
 
             {/* Create conversation modal */}
             <Modal

@@ -115,8 +115,8 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
                                     }
                                 `}>
                                     <FileText className={`h-5 w-5 ${selectedDocumentId === document.id
-                                            ? 'text-white'
-                                            : 'text-primary-600'
+                                        ? 'text-white'
+                                        : 'text-primary-600'
                                         }`} />
                                 </div>
 

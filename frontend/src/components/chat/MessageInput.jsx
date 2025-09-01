@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Send, Paperclip } from 'lucide-react';
+import { Send } from 'lucide-react';
 import Button from '../ui/Button';
 
 const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false }) => {
@@ -13,7 +13,6 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
         const messageToSend = message.trim();
         setMessage('');
 
-        // Reset textarea height
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
         }
@@ -31,7 +30,6 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
     const handleTextareaChange = (e) => {
         setMessage(e.target.value);
 
-        // Auto-resize textarea
         const textarea = e.target;
         textarea.style.height = 'auto';
         textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -40,18 +38,6 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
     return (
         <div className="bg-white border-t border-neutral-200 p-4">
             <form onSubmit={handleSubmit} className="flex items-center space-x-3">
-                {/* File upload button (placeholder for future implementation) */}
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="md"
-                    className="shrink-0 p-2"
-                    disabled={disabled}
-                    title="Adjuntar archivo (próximamente)"
-                >
-                    <Paperclip className="h-5 w-5" />
-                </Button>
-
                 {/* Message input */}
                 <div className="flex-1 relative">
                     <textarea

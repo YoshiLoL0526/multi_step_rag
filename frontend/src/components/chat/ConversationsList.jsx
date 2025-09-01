@@ -4,7 +4,7 @@ import LoadingSpinner from '../ui/LoadingSpinner';
 
 const ConversationsList = ({
     conversations,
-    activeConversation,
+    activeConversationId,
     onSelectConversation,
     onDeleteConversation,
     loading
@@ -50,12 +50,12 @@ const ConversationsList = ({
                                 key={conversation.id}
                                 className={`
                                     group relative flex items-center p-3 rounded-lg cursor-pointer transition-colors
-                                    ${activeConversation?.id === conversation.id
+                                    ${activeConversationId === conversation.id
                                         ? 'bg-primary-100 border border-primary-200'
                                         : 'hover:bg-neutral-50 border border-transparent'
                                     }
                                 `}
-                                onClick={() => onSelectConversation(conversation)}
+                                onClick={() => onSelectConversation(conversation.id)}
                             >
                                 <div className="flex-shrink-0 mr-3">
                                     <div className="h-8 w-8 bg-primary-100 rounded-full flex items-center justify-center">

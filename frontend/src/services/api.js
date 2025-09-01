@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL, STORAGE_KEYS } from '../utils/constants';
 
-// Crear instancia de axios
 const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
@@ -9,7 +8,6 @@ const api = axios.create({
     },
 });
 
-// Interceptor para agregar token de autorización
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
@@ -23,7 +21,6 @@ api.interceptors.request.use(
     }
 );
 
-// Interceptor para manejar respuestas y errores
 api.interceptors.response.use(
     (response) => response,
     (error) => {

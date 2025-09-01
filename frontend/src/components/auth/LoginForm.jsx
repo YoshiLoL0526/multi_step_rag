@@ -12,11 +12,10 @@ const LoginForm = () => {
     const [formErrors, setFormErrors] = useState({});
 
     useEffect(() => {
-        // Limpiar errores cuando el componente se monta
         if (error) {
             clearError();
         }
-    }, []);
+    }, [clearError, error]);
 
     const validateForm = () => {
         const errors = {};
@@ -48,7 +47,6 @@ const LoginForm = () => {
         const result = await login(formData.email, formData.password);
 
         if (!result.success) {
-            // El error se maneja en el context
             console.error('Error de login:', result.error);
         }
     };
@@ -60,7 +58,6 @@ const LoginForm = () => {
             [name]: value,
         }));
 
-        // Limpiar error del campo específico
         if (formErrors[name]) {
             setFormErrors(prev => ({
                 ...prev,
@@ -68,7 +65,6 @@ const LoginForm = () => {
             }));
         }
 
-        // Limpiar error general si existe
         if (error) {
             clearError();
         }

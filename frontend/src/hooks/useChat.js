@@ -3,9 +3,8 @@ import { chatService } from '../services/chat';
 import { useAppContext } from '../contexts/AppContext';
 
 export const useChat = () => {
-    const { selectedDocumentId, activeConversationId, setActiveConversationId } = useAppContext();
+    const { selectedDocumentId, activeConversationId, setActiveConversationId, selectConversation } = useAppContext();
     const [conversations, setConversations] = useState([]);
-    const [activeConversation, setActiveConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sendingMessage, setSendingMessage] = useState(false);
@@ -17,7 +16,7 @@ export const useChat = () => {
             fetchConversations();
         } else {
             setConversations([]);
-            setActiveConversation(null);
+            setActiveConversationId(null);
             setMessages([]);
         }
     }, [selectedDocumentId]);
@@ -27,11 +26,11 @@ export const useChat = () => {
         if (activeConversationId) {
             const conversation = conversations.find(c => c.id === activeConversationId);
             if (conversation) {
-                setActiveConversation(conversation);
+                setActiveConversationId(conversation.id);
                 fetchMessages(activeConversationId);
             }
         } else {
-            setActiveConversation(null);
+            setActiveConversationId(null);
             setMessages([]);
         }
     }, [activeConversationId, conversations]);
@@ -100,10 +99,6 @@ export const useChat = () => {
         }
     };
 
-    const selectConversation = (conversation) => {
-        setActiveConversationId(conversation.id);
-    };
-
     const fetchMessages = async (conversationId) => {
         if (!conversationId) return;
 
@@ -151,7 +146,7 @@ export const useChat = () => {
 
     return {
         conversations,
-        activeConversation,
+        activeConversationId,
         messages,
         loading,
         sendingMessage,

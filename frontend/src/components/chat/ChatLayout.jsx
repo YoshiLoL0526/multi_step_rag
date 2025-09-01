@@ -8,7 +8,7 @@ import ConversationsSidebar from './ConversationsSidebar';
 import Button from '../ui/Button';
 
 const ChatLayout = () => {
-    const { selectedDocumentId, selectDocument } = useAppContext();
+    const { selectedDocumentId } = useAppContext();
     const { documents } = useDocuments();
     const { isMobile } = useResponsive();
     const [showConversations, setShowConversations] = useState(!isMobile);
@@ -26,24 +26,6 @@ const ChatLayout = () => {
                     <p className="text-neutral-600 mb-6">
                         Elige un documento para comenzar a chatear con él.
                     </p>
-                    {documents.length > 0 && (
-                        <div className="space-y-2">
-                            {documents.slice(0, 3).map((doc) => (
-                                <button
-                                    key={doc.id}
-                                    onClick={() => selectDocument(doc.id)}
-                                    className="w-full p-3 text-left border border-neutral-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                                >
-                                    <p className="font-medium text-neutral-900 truncate">
-                                        {doc.title || doc.filename}
-                                    </p>
-                                    <p className="text-sm text-neutral-500 truncate">
-                                        {doc.filename}
-                                    </p>
-                                </button>
-                            ))}
-                        </div>
-                    )}
                 </div>
             </div>
         );
