@@ -6,7 +6,7 @@ import { MessageSquare } from 'lucide-react';
 
 const ChatContainer = () => {
     const {
-        activeConversation,
+        activeConversationId,
         messages,
         loading,
         sendingMessage,
@@ -19,8 +19,7 @@ const ChatContainer = () => {
         return await sendMessage(content);
     };
 
-    // Vista cuando no hay conversación activa
-    if (!activeConversation) {
+    if (!activeConversationId) {
         return (
             <div className="h-full flex">
                 <div className="flex-1 flex items-center justify-center bg-neutral-50">
@@ -40,7 +39,6 @@ const ChatContainer = () => {
         );
     }
 
-    // Vista principal del chat cuando hay conversación activa
     return (
         <div className="h-full flex">
             <div className="flex-1 flex flex-col">

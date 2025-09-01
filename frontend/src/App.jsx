@@ -5,19 +5,9 @@ import LoginPage from './pages/LoginPage';
 import ChatPage from './pages/ChatPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
-import LoadingSpinner from './components/ui/LoadingSpinner';
 
-// Componente para manejar redirección automática
 const AppRoutes = () => {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <LoadingSpinner size="xl" />
-      </div>
-    );
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
     <Routes>

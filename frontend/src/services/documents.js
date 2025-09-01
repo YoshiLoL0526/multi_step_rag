@@ -2,7 +2,6 @@ import api from './api';
 import { API_ENDPOINTS } from '../utils/constants';
 
 export const documentsService = {
-    // Obtener lista de documentos
     getDocuments: async () => {
         try {
             const response = await api.get(API_ENDPOINTS.DOCUMENTS.LIST);
@@ -15,7 +14,6 @@ export const documentsService = {
         }
     },
 
-    // Subir documento
     uploadDocument: async (file, onProgress = null) => {
         try {
             const formData = new FormData();
@@ -46,7 +44,6 @@ export const documentsService = {
         }
     },
 
-    // Obtener documento específico
     getDocument: async (id) => {
         try {
             const response = await api.get(API_ENDPOINTS.DOCUMENTS.GET(id));
@@ -59,7 +56,6 @@ export const documentsService = {
         }
     },
 
-    // Actualizar documento
     updateDocument: async (id, data) => {
         try {
             const response = await api.put(API_ENDPOINTS.DOCUMENTS.UPDATE(id), data);
@@ -72,7 +68,6 @@ export const documentsService = {
         }
     },
 
-    // Eliminar documento
     deleteDocument: async (id) => {
         try {
             await api.delete(API_ENDPOINTS.DOCUMENTS.DELETE(id));

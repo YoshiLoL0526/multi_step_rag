@@ -2,7 +2,6 @@ import api from './api';
 import { API_ENDPOINTS } from '../utils/constants';
 
 export const chatService = {
-    // Obtener conversaciones de un documento
     getConversations: async (documentId, skip = 0, limit = 100) => {
         try {
             const response = await api.get(API_ENDPOINTS.CHAT.CONVERSATIONS, {
@@ -17,7 +16,6 @@ export const chatService = {
         }
     },
 
-    // Crear nueva conversación
     createConversation: async (title, documentId) => {
         try {
             const response = await api.post(API_ENDPOINTS.CHAT.CONVERSATIONS, {
@@ -33,7 +31,6 @@ export const chatService = {
         }
     },
 
-    // Obtener conversación específica
     getConversation: async (conversationId) => {
         try {
             const response = await api.get(API_ENDPOINTS.CHAT.CONVERSATION(conversationId));
@@ -46,7 +43,6 @@ export const chatService = {
         }
     },
 
-    // Eliminar conversación
     deleteConversation: async (conversationId) => {
         try {
             await api.delete(API_ENDPOINTS.CHAT.CONVERSATION(conversationId));
@@ -59,7 +55,6 @@ export const chatService = {
         }
     },
 
-    // Obtener mensajes de una conversación
     getMessages: async (conversationId, skip = 0, limit = 100) => {
         try {
             const response = await api.get(API_ENDPOINTS.CHAT.MESSAGES(conversationId), {
@@ -74,7 +69,6 @@ export const chatService = {
         }
     },
 
-    // Enviar mensaje
     sendMessage: async (conversationId, content) => {
         try {
             const response = await api.post(API_ENDPOINTS.CHAT.MESSAGES(conversationId), {

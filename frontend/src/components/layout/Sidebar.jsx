@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import Input from '../ui/Input';
-import DocumentsTab from '../documents/DocumentsTab';
+import DocumentsSidebar from '../documents/DocumentsSidebar';
 import { useResponsive } from '../../hooks/useResponsive';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
                 {/* Content - área scrolleable */}
                 <div className="flex-1 min-h-0 overflow-hidden">
-                    <DocumentsTab />
+                    <DocumentsSidebar />
                 </div>
             </div>
         </>
