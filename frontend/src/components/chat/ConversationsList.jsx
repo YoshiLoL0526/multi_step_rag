@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { MessageSquare, Trash2, MoreVertical } from 'lucide-react';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useModalActions } from '../../hooks/useModalActions';
-import Button from '../ui/Button'
+import ConversationDelete from './ConversationDelete'
 
 const ConversationsList = ({
     conversations,
@@ -22,9 +22,7 @@ const ConversationsList = ({
         if (activeConversationId === conversationId) {
             onSelectConversation(null);
         }
-
-        closeModal(modalId);
-    }, [activeConversationId, closeModal, onDeleteConversation, onSelectConversation]);
+    }, [activeConversationId, onDeleteConversation, onSelectConversation]);
 
     const handleDelete = async (conversationId, e) => {
         e.stopPropagation();
@@ -33,39 +31,10 @@ const ConversationsList = ({
         const modalId = showConfirmDialog({
             title: 'Confirmar eliminación',
             content: (
-                <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 w-10 h-10 bg-error-100 rounded-full flex items-center justify-center">
-                            <Trash2 className="h-5 w-5 text-error-600" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-sm font-medium text-neutral-900 mb-1">
-                                ¿Eliminar conversación?
-                            </h3>
-                            <p className="text-sm text-neutral-600">
-                                Eliminarás permanentemente la conversación.
-                                Esta acción no se puede deshacer.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end space-x-3">
-                        <Button
-                            variant="ghost"
-                            onClick={() => closeModal(modalId)}
-                            disabled={loading}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="danger"
-                            onClick={() => handleConfirmDelete(conversationId, modalId)}
-                            loading={loading}
-                        >
-                            Eliminar
-                        </Button>
-                    </div>
-                </div>
+                <ConversationDelete
+                    onClose={() => closeModal(modalId)}
+                    onConfirm={() => handleConfirmDelete(conversationId, modalId)}
+                />
             )
         });
     };

@@ -42,7 +42,7 @@ export const useChat = () => {
     };
 
     const deleteConversation = async (conversationId) => {
-
+        setLoading(true)
         const result = await chatService.deleteConversation(conversationId);
 
         if (result.success) {
@@ -53,6 +53,7 @@ export const useChat = () => {
         } else {
             handleError(result, 'Error al eliminar la conversación')
         }
+        setLoading(false)
 
         return result;
     };

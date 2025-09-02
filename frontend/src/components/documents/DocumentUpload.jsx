@@ -9,6 +9,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState(null);
     const [uploadComplete, setUploadComplete] = useState(false);
+    const [uploading, setUploading] = useState(false)
 
     const validationConfig = useMemo(() => ({
         maxSize: 100 * 1024 * 1024,
@@ -81,10 +82,13 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
 
         setError(null);
         setUploadComplete(false);
+        setUploading(true)
 
         const result = await onUpload(selectedFile, (progress) => {
             setUploadProgress(progress);
         });
+
+        setUploading(false);
 
         if (result.success) {
             setUploadComplete(true);
@@ -92,7 +96,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                 setSelectedFile(null);
                 setUploadProgress(0);
                 setUploadComplete(false);
-            }, 2000);
+            }, 3000);
         } else {
             setError(result.error || 'Error al subir el archivo');
         }
@@ -228,7 +232,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                 <Button
                     onClick={handleUpload}
                     disabled={loading || !selectedFile}
-                    loading={loading}
+                    loading={uploading}
                     className="w-full h-12 text-base font-medium"
                     size="lg"
                 >
