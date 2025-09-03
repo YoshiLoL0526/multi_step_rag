@@ -74,11 +74,9 @@ export const chatService = {
         }
     },
 
-    sendMessage: async (conversationId, content) => {
+    sendMessage: async (conversationId, messageData) => {
         try {
-            const response = await api.post(API_ENDPOINTS.CHAT.MESSAGES(conversationId), {
-                content
-            });
+            const response = await api.post(API_ENDPOINTS.CHAT.MESSAGES(conversationId), messageData);
             return { success: true, data: response.data };
         } catch (error) {
             return {

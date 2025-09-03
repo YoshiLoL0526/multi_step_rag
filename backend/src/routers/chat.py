@@ -60,7 +60,11 @@ def send_message(
     chat_service: ChatServiceDep,
 ):
     return chat_service.send_message(
-        user=user, conversation_id=conversation_id, content=request.content
+        user=user,
+        conversation_id=conversation_id,
+        content=request.content,
+        provider=request.provider,
+        model=request.model,
     )
 
 

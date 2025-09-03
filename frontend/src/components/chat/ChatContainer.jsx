@@ -12,8 +12,8 @@ const ChatContainer = () => {
         sendMessage,
     } = useChat();
 
-    const handleSendMessage = async (content) => {
-        return await sendMessage(content);
+    const handleSendMessage = async (messageData) => {
+        return await sendMessage(messageData);
     };
 
     if (!activeConversationId) {

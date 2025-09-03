@@ -1,6 +1,12 @@
 from fastapi import HTTPException, status
 
-from src.schemas.chat_schemas import Role, ConversationCreate, MessageCreate
+from src.schemas.chat_schemas import (
+    LLMModel,
+    LLMProvider,
+    Role,
+    ConversationCreate,
+    MessageCreate,
+)
 from src.models.user_model import User
 from src.crud.document_crud import DocumentCRUD
 from src.crud.conversation_crud import ConversationCRUD
@@ -72,7 +78,14 @@ class ChatService:
         conversation = self.conversation_crud.delete(conversation)
         return conversation
 
-    def send_message(self, user: User, conversation_id: int, content: str):
+    def send_message(
+        self,
+        user: User,
+        conversation_id: int,
+        content: str,
+        provider: LLMProvider,
+        model: LLMModel,
+    ):
         conversation = self.get_conversation(user, conversation_id)
 
         obj_in = MessageCreate(
@@ -100,6 +113,8 @@ class ChatService:
             message=message.content,
             history=history,
             document=document,
+            provider=provider,
+            model=model,
         )
 
         resp_obj_in = MessageCreate(

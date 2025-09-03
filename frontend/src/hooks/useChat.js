@@ -74,11 +74,11 @@ export const useChat = () => {
         return result
     };
 
-    const sendMessage = async (content) => {
-        if (!activeConversationId || !content.trim()) return null;
+    const sendMessage = async (messageData) => {
+        if (!activeConversationId || !messageData.content.trim()) return null;
 
         setSendingMessage(true);
-        const result = await chatService.sendMessage(activeConversationId, content.trim());
+        const result = await chatService.sendMessage(activeConversationId, messageData);
 
         if (result.success) {
             await fetchMessages(activeConversationId);

@@ -3,6 +3,27 @@ from enum import StrEnum
 from pydantic import BaseModel
 
 
+class LLMProvider(StrEnum):
+    OPENAI = "openai"
+    GEMINI = "gemini"
+
+
+class LLMModel(StrEnum):
+    # OpenAI models
+    GPT_4O = "gpt-4o"
+    GPT_4O_MINI = "gpt-4o-mini"
+    GPT_3_5_TURBO = "gpt-3.5-turbo"
+    GPT_O1 = "gpt-o1"
+    GPT_O3 = "gpt-o3"
+
+    # Gemini models
+    GEMINI_2_5_PRO = "gemini-2.5-pro"
+    GEMINI_2_5_FLASH = "gemini-2.5-flash"
+    GEMINI_2_5_FLASH_LITE = "gemini-2.5-flash-lite"
+    GEMINI_1_5_PRO = "gemini-1.5-pro"
+    GEMINI_1_5_FLASH = "gemini-1.5-flash"
+
+
 class ConversationBase(BaseModel):
     title: str
 
@@ -45,7 +66,8 @@ class MessageInDB(MessageBase):
 
 
 class SendMessageRequest(MessageBase):
-    pass
+    provider: LLMProvider
+    model: LLMModel
 
 
 class CreateDocumentConversationRequest(ConversationBase):

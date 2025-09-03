@@ -50,8 +50,9 @@ class Config(BaseSettings):
     ALLOWED_FILE_TYPES: list[str] = [".pdf", ".docx", ".txt", ".mp3", ".wav", ".m4a"]
     MAX_FILE_SIZE_MB: int = 5 * 1024 * 1024 * 1024  # 5 GB
 
-    # OpenAI settings
+    # AI settings
     OPENAI_API_KEY: str = Field(...)
+    GOOGLE_API_KEY: str = Field(...)
 
 
 settings = Config()

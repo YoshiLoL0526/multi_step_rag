@@ -1,23 +1,33 @@
 import { useState, useRef } from 'react';
 import { Send } from 'lucide-react';
 import Button from '../ui/Button';
+import LLMSelector from './LLMSelector';
 
 const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false }) => {
     const [message, setMessage] = useState('');
+    const [provider, setProvider] = useState('openai');
+    const [model, setModel] = useState('gpt-4o');
+    const [selectorExpanded, setSelectorExpanded] = useState(false);
     const textareaRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message.trim() || disabled || sendingMessage) return;
+        if (!message.trim() || disabled || sendingMessage || !provider || !model) return;
 
-        const messageToSend = message.trim();
+        const messageData = {
+            content: message.trim(),
+            provider,
+            model
+        };
+
         setMessage('');
+        setSelectorExpanded(false);
 
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
         }
 
-        await onSendMessage(messageToSend);
+        await onSendMessage(messageData);
     };
 
     const handleKeyPress = (e) => {
@@ -35,10 +45,23 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
         textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
     };
 
+    const canSend = message.trim() && provider && model && !disabled && !sendingMessage;
+
     return (
-        <div className="bg-white border-t border-neutral-200 p-4">
+        <div className="bg-white border-t border-neutral-200 p-4 space-y-4">
+            {/* Selector de LLM colapsable */}
+            <LLMSelector
+                provider={provider}
+                model={model}
+                onProviderChange={setProvider}
+                onModelChange={setModel}
+                disabled={disabled || sendingMessage}
+                isExpanded={selectorExpanded}
+                onExpandedChange={setSelectorExpanded}
+            />
+
+            {/* Input de mensaje */}
             <form onSubmit={handleSubmit} className="flex items-center space-x-3">
-                {/* Message input */}
                 <div className="flex-1 relative">
                     <textarea
                         ref={textareaRef}
@@ -53,13 +76,12 @@ const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false 
                     />
                 </div>
 
-                {/* Send button */}
                 <Button
                     type="submit"
                     variant="primary"
                     size="md"
                     className="shrink-0 p-2"
-                    disabled={disabled || sendingMessage || !message.trim()}
+                    disabled={!canSend}
                     loading={sendingMessage}
                 >
                     <Send className="h-5 w-5" />
