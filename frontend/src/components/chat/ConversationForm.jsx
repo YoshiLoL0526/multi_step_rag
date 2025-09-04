@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 
-const ConversationForm = ({ createConversation, onClose }) => {
+const ConversationForm = ({ onCreate, onClose }) => {
     const [title, setTitle] = useState('');
     const [creating, setCreating] = useState(false);
 
@@ -14,10 +14,12 @@ const ConversationForm = ({ createConversation, onClose }) => {
         if (!title.trim()) return;
 
         setCreating(true);
-        await createConversation(title.trim());
+        const newConversation = await onCreate(title.trim());
         setCreating(false);
 
-        onClose();
+        if (newConversation) {
+            onClose();
+        }
     };
 
     return (

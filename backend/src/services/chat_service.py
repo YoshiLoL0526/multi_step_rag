@@ -59,6 +59,8 @@ class ChatService:
             skip=pagination["skip"],
             limit=pagination["limit"],
             filters={"owner_id": user.id, "document_id": document_id},
+            order_by="created_at",
+            desc=False,
         )
         return conversations
 
@@ -70,6 +72,8 @@ class ChatService:
             skip=pagination["skip"],
             limit=pagination["limit"],
             filters={"conversation_id": conversation.id},
+            order_by="created_at",
+            desc=False,
         )
         return messages
 

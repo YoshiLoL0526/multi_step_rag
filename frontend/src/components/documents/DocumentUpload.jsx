@@ -1,15 +1,14 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Upload, X, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, X, FileText } from 'lucide-react';
 import Button from '../ui/Button';
 import { SUPPORTED_FILE_TYPES } from '../../utils/constants';
+import { useNotifications } from '../../contexts/NotificationContext';
 
-const DocumentUpload = ({ onUpload, loading = false }) => {
+const DocumentUpload = ({ onUpload, onClose, loading = false }) => {
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [error, setError] = useState(null);
-    const [uploadComplete, setUploadComplete] = useState(false);
     const [uploading, setUploading] = useState(false)
+    const { showError } = useNotifications()
 
     const validationConfig = useMemo(() => ({
         maxSize: 100 * 1024 * 1024,
@@ -21,7 +20,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
         const { maxSize, supportedTypes } = validationConfig;
 
         if (!supportedTypes.includes(file.type)) {
-            return 'Tipo de archivo no soportado. Solo se permiten PDF, TXT y DOCX.';
+            return 'Tipo de archivo no soportado. Solo se permiten PDF, TXT, DOCX y MD.';
         }
 
         if (file.size > maxSize) {
@@ -41,16 +40,13 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
 
         const validationError = validateFile(file);
         if (validationError) {
-            setError(validationError);
+            showError('Error al validar el archivo')
             setSelectedFile(null);
             return;
         }
 
         setSelectedFile(file);
-        setError(null);
-        setUploadComplete(false);
-        setUploadProgress(0);
-    }, [validateFile]);
+    }, [showError, validateFile]);
 
     const handleDrag = useCallback((e) => {
         e.preventDefault();
@@ -80,33 +76,20 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
     const handleUpload = useCallback(async () => {
         if (!selectedFile || loading) return;
 
-        setError(null);
-        setUploadComplete(false);
         setUploading(true)
-
-        const result = await onUpload(selectedFile, (progress) => {
-            setUploadProgress(progress);
-        });
-
+        const result = await onUpload(selectedFile);
         setUploading(false);
 
-        if (result.success) {
-            setUploadComplete(true);
-            setTimeout(() => {
-                setSelectedFile(null);
-                setUploadProgress(0);
-                setUploadComplete(false);
-            }, 3000);
-        } else {
-            setError(result.error || 'Error al subir el archivo');
+        if (!result.success) {
+            showError('Error al subir el archivo');
         }
-    }, [selectedFile, loading, onUpload]);
+        else {
+            onClose()
+        }
+    }, [selectedFile, loading, onUpload, showError, onClose]);
 
     const removeFile = useCallback(() => {
         setSelectedFile(null);
-        setError(null);
-        setUploadProgress(0);
-        setUploadComplete(false);
     }, []);
 
     const DropZone = () => (
@@ -116,9 +99,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                 ${dragActive
                     ? 'border-primary-500 bg-primary-50 scale-105'
                     : selectedFile
-                        ? uploadComplete
-                            ? 'border-success-500 bg-success-50'
-                            : 'border-primary-300 bg-primary-25'
+                        ? 'border-primary-300 bg-primary-25'
                         : 'border-neutral-300 bg-neutral-50 hover:border-neutral-400 hover:bg-neutral-100'
                 }
                 ${loading ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}
@@ -140,28 +121,19 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                 <div className="flex items-center justify-center space-x-4">
                     <div className={`
                         h-12 w-12 rounded-full flex items-center justify-center
-                        ${uploadComplete ? 'bg-success-100' : 'bg-primary-100'}
+                        'bg-primary-100'
                     `}>
-                        {uploadComplete ? (
-                            <CheckCircle className="h-6 w-6 text-success-600" />
-                        ) : (
-                            <FileText className="h-6 w-6 text-primary-600" />
-                        )}
+                        <FileText className="h-6 w-6 text-primary-600" />
                     </div>
                     <div className="text-left flex-1">
-                        <p className={`font-medium ${uploadComplete ? 'text-success-900' : 'text-primary-900'}`}>
+                        <p className={`font-medium text-primary-900`}>
                             {selectedFile.name}
                         </p>
-                        <p className={`text-sm ${uploadComplete ? 'text-success-600' : 'text-primary-600'}`}>
+                        <p className={`text-sm text-primary-600`}>
                             {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                         </p>
-                        {uploadComplete && (
-                            <p className="text-xs text-success-600 mt-1">
-                                ¡Archivo subido exitosamente!
-                            </p>
-                        )}
                     </div>
-                    {!loading && !uploadComplete && (
+                    {!loading && (
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -185,7 +157,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                             O haz clic para seleccionar un archivo
                         </p>
                         <p className="text-xs text-neutral-500">
-                            Formatos soportados: PDF, TXT, DOCX (máx. {(validationConfig.maxSize / 1024 / 1024).toFixed(0)}MB)
+                            Formatos soportados: PDF, TXT, DOCX y MD (máx. {(validationConfig.maxSize / 1024 / 1024).toFixed(0)}MB)
                         </p>
                     </div>
                 </div>
@@ -197,38 +169,8 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
         <div className="space-y-6">
             <DropZone />
 
-            {/* Barra de progreso mejorada */}
-            {loading && uploadProgress > 0 && (
-                <div className="space-y-3">
-                    <div className="flex justify-between items-center text-sm">
-                        <span className="font-medium text-neutral-700">Subiendo archivo...</span>
-                        <span className="text-primary-600 font-semibold">{uploadProgress}%</span>
-                    </div>
-                    <div className="w-full bg-neutral-200 rounded-full h-3 overflow-hidden">
-                        <div
-                            className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-500 ease-out"
-                            style={{ width: `${uploadProgress}%` }}
-                        />
-                    </div>
-                    <p className="text-xs text-neutral-500 text-center">
-                        Por favor, no cierres esta ventana mientras se sube el archivo
-                    </p>
-                </div>
-            )}
-
-            {/* Mensaje de error mejorado */}
-            {error && (
-                <div className="flex items-start space-x-3 p-4 bg-error-50 border border-error-200 rounded-lg">
-                    <AlertCircle className="h-5 w-5 text-error-600 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                        <p className="text-sm font-medium text-error-800 mb-1">Error al procesar archivo</p>
-                        <p className="text-sm text-error-700">{error}</p>
-                    </div>
-                </div>
-            )}
-
             {/* Botón de subida mejorado */}
-            {selectedFile && !uploadComplete && (
+            {selectedFile && (
                 <Button
                     onClick={handleUpload}
                     disabled={loading || !selectedFile}
@@ -236,7 +178,7 @@ const DocumentUpload = ({ onUpload, loading = false }) => {
                     className="w-full h-12 text-base font-medium"
                     size="lg"
                 >
-                    {loading ? `Subiendo... ${uploadProgress}%` : 'Subir documento'}
+                    Subir documento
                 </Button>
             )}
         </div>

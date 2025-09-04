@@ -5,12 +5,12 @@ import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useModalActions } from '../../hooks/useModalActions';
+import DocumentDelete from './DocumentDelete';
 
 const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
     const { selectedDocumentId, setSelectedDocumentId } = useAppContext();
     const { showConfirmDialog, closeModal } = useModalActions();
     const [activeMenuId, setActiveMenuId] = useState(null);
-    const [actionLoading, setActionLoading] = useState(null);
 
     const statusConfig = useMemo(() => ({
         processing: { variant: 'warning', icon: Clock, text: 'Procesando' },
@@ -57,18 +57,13 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
     const handleConfirmDelete = useCallback(async (document, modalId) => {
         if (!document) return;
 
-        setActionLoading('delete');
-        try {
-            await onDelete(document.id);
+        await onDelete(document.id);
 
-            if (selectedDocumentId === document.id) {
-                setSelectedDocumentId(null);
-            }
-
-            closeModal(modalId);
-        } finally {
-            setActionLoading(null);
+        if (selectedDocumentId === document.id) {
+            setSelectedDocumentId(null);
         }
+
+        closeModal(modalId);
     }, [onDelete, selectedDocumentId, setSelectedDocumentId, closeModal]);
 
     const handleDeleteClick = useCallback((document) => {
@@ -77,42 +72,13 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
         const modalId = showConfirmDialog({
             title: 'Confirmar eliminación',
             content: (
-                <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 w-10 h-10 bg-error-100 rounded-full flex items-center justify-center">
-                            <Trash2 className="h-5 w-5 text-error-600" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-sm font-medium text-neutral-900 mb-1">
-                                ¿Eliminar documento?
-                            </h3>
-                            <p className="text-sm text-neutral-600">
-                                Eliminarás permanentemente "{document?.title || document?.filename}".
-                                Esta acción no se puede deshacer.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end space-x-3">
-                        <Button
-                            variant="ghost"
-                            onClick={() => closeModal(modalId)}
-                            disabled={actionLoading === 'delete'}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="danger"
-                            onClick={() => handleConfirmDelete(document, modalId)}
-                            loading={actionLoading === 'delete'}
-                        >
-                            Eliminar documento
-                        </Button>
-                    </div>
-                </div>
+                <DocumentDelete
+                    onClose={() => closeModal(modalId)}
+                    onDelete={() => handleConfirmDelete(document, modalId)}
+                />
             )
         });
-    }, [showConfirmDialog, closeModal, actionLoading, handleConfirmDelete]);
+    }, [showConfirmDialog, closeModal, handleConfirmDelete]);
 
     const DocumentCard = useCallback(({ document }) => {
         const isSelected = selectedDocumentId === document.id;
@@ -157,9 +123,6 @@ const DocumentList = ({ documents, loading, onDelete, onUpdate }) => {
                                     {formatFileSize(document.file_size)}
                                 </span>
                                 <span>{formatDate(document.created_at)}</span>
-                                {document.pages_count && (
-                                    <span>{document.pages_count} páginas</span>
-                                )}
                             </div>
 
                             {document.description && (

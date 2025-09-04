@@ -28,6 +28,7 @@ class Document(Base):
     filename = Column(String, index=True, nullable=False)
     status = Column(SQLAlchemyEnum(DocumentStatus), default=DocumentStatus.PENDING)
     storage_path = Column(String, nullable=False)
+    file_size = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 

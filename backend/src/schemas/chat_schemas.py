@@ -2,6 +2,8 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
+from .base_schemas import TimestampMixin
+
 
 class LLMProvider(StrEnum):
     OPENAI = "openai"
@@ -33,7 +35,7 @@ class ConversationCreate(ConversationBase):
     document_id: int
 
 
-class ConversationInDB(ConversationBase):
+class ConversationInDB(ConversationBase, TimestampMixin):
     id: int
     owner_id: int
     document_id: int
@@ -56,7 +58,7 @@ class MessageCreate(MessageBase):
     role: Role
 
 
-class MessageInDB(MessageBase):
+class MessageInDB(MessageBase, TimestampMixin):
     id: int
     conversation_id: int
     role: Role

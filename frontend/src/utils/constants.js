@@ -29,4 +29,5 @@ export const SUPPORTED_FILE_TYPES = {
     'application/pdf': '.pdf',
     'text/plain': '.txt',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+    'text/markdown': '.md'
 };

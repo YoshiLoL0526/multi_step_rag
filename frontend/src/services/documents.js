@@ -15,7 +15,7 @@ export const documentsService = {
         }
     },
 
-    uploadDocument: async (file, onProgress = null) => {
+    uploadDocument: async (file) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -25,15 +25,6 @@ export const documentsService = {
                     'Content-Type': 'multipart/form-data',
                 },
             };
-
-            if (onProgress) {
-                config.onUploadProgress = (progressEvent) => {
-                    const percentCompleted = Math.round(
-                        (progressEvent.loaded * 100) / progressEvent.total
-                    );
-                    onProgress(percentCompleted);
-                };
-            }
 
             const response = await api.post(API_ENDPOINTS.DOCUMENTS.UPLOAD, formData, config);
             return { success: true, data: response.data };

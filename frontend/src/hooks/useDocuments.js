@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { documentsService } from '../services/documents';
 import { useErrorHandler } from './useErrorHandler';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -9,7 +9,7 @@ export const useDocuments = () => {
     const { handleError } = useErrorHandler();
     const { showSuccess } = useNotifications();
 
-    const fetchDocuments = async () => {
+    const fetchDocuments = useCallback(async () => {
         setLoading(true);
         const result = await documentsService.getDocuments();
 
@@ -22,10 +22,10 @@ export const useDocuments = () => {
         setLoading(false);
 
         return result;
-    };
+    }, [handleError]);
 
-    const uploadDocument = async (file, onProgress = null) => {
-        const result = await documentsService.uploadDocument(file, onProgress);
+    const uploadDocument = async (file) => {
+        const result = await documentsService.uploadDocument(file);
 
         if (result.success) {
             await fetchDocuments();
@@ -67,7 +67,7 @@ export const useDocuments = () => {
 
     useEffect(() => {
         fetchDocuments();
-    }, []);
+    }, [fetchDocuments]);
 
     return {
         documents,

@@ -3,7 +3,7 @@ import { Send } from 'lucide-react';
 import Button from '../ui/Button';
 import LLMSelector from './LLMSelector';
 
-const MessageInput = ({ onSendMessage, disabled = false, sendingMessage = false }) => {
+const MessageInput = ({ sendingMessage, onSendMessage, disabled = false }) => {
     const [message, setMessage] = useState('');
     const [provider, setProvider] = useState('openai');
     const [model, setModel] = useState('gpt-4o');

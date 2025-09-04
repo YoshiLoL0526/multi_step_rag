@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { chatService } from '../services/chat';
 import { useAppContext } from '../contexts/AppContext';
 import { useErrorHandler } from './useErrorHandler';
@@ -11,11 +11,10 @@ export const useChat = () => {
     const [sendingMessage, setSendingMessage] = useState(false);
     const { handleError } = useErrorHandler();
 
-    const fetchConversations = async () => {
+    const fetchConversations = useCallback(async () => {
         if (!selectedDocumentId) return;
 
         setLoading(true);
-
         const result = await chatService.getConversations(selectedDocumentId);
         if (result.success) {
             setConversations(result.data);
@@ -24,7 +23,7 @@ export const useChat = () => {
         }
         setLoading(false);
         return result
-    };
+    }, [handleError, selectedDocumentId]);
 
     const createConversation = async (title) => {
         if (!selectedDocumentId || !title.trim()) return null;
@@ -34,6 +33,7 @@ export const useChat = () => {
         if (result.success) {
             await fetchConversations();
             setActiveConversationId(result.data.id);
+            setMessages([])
             return result.data;
         } else {
             handleError(result, 'Error al crear la conversación')
@@ -42,24 +42,26 @@ export const useChat = () => {
     };
 
     const deleteConversation = async (conversationId) => {
-        setLoading(true)
         const result = await chatService.deleteConversation(conversationId);
 
         if (result.success) {
             setConversations(prev => prev.filter(conv => conv.id !== conversationId));
             if (activeConversationId === conversationId) {
                 setActiveConversationId(null);
+                setMessages([]);
             }
         } else {
             handleError(result, 'Error al eliminar la conversación')
         }
-        setLoading(false)
 
         return result;
     };
 
-    const fetchMessages = async (conversationId) => {
-        if (!conversationId) return;
+    const fetchMessages = useCallback(async (conversationId) => {
+        if (!conversationId) {
+            setMessages([]);
+            return;
+        }
 
         setLoading(true);
         const result = await chatService.getMessages(conversationId);
@@ -72,10 +74,20 @@ export const useChat = () => {
 
         setLoading(false)
         return result
-    };
+    }, [handleError]);
 
     const sendMessage = async (messageData) => {
         if (!activeConversationId || !messageData.content.trim()) return null;
+
+        const tempId = `temp_${Date.now()}`;
+        const userMessage = {
+            id: tempId,
+            role: 'user',
+            content: messageData.content,
+            created_at: new Date().toISOString()
+        };
+
+        setMessages(prevMessages => [...prevMessages, userMessage]);
 
         setSendingMessage(true);
         const result = await chatService.sendMessage(activeConversationId, messageData);
@@ -83,10 +95,11 @@ export const useChat = () => {
         if (result.success) {
             await fetchMessages(activeConversationId);
         } else {
+            setMessages(prevMessages => prevMessages.filter(msg => msg.id !== tempId));
             handleError(result, 'Error al enviar el mensaje')
         }
-        setSendingMessage(false);
 
+        setSendingMessage(false);
         return result;
     };
 
@@ -98,20 +111,11 @@ export const useChat = () => {
             setActiveConversationId(null);
             setMessages([]);
         }
-    }, [selectedDocumentId]);
+    }, [selectedDocumentId, fetchConversations, setActiveConversationId]);
 
     useEffect(() => {
-        if (activeConversationId) {
-            const conversation = conversations.find(c => c.id === activeConversationId);
-            if (conversation) {
-                setActiveConversationId(conversation.id);
-                fetchMessages(activeConversationId);
-            }
-        } else {
-            setActiveConversationId(null);
-            setMessages([]);
-        }
-    }, [activeConversationId, setActiveConversationId, conversations]);
+        fetchMessages(activeConversationId);
+    }, [activeConversationId, fetchMessages]);
 
     return {
         conversations,
@@ -123,5 +127,6 @@ export const useChat = () => {
         deleteConversation,
         selectConversation,
         sendMessage,
+        setMessages,
     };
 };

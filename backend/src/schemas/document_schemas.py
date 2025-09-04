@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from .base_schemas import TimestampMixin
 from src.models.document_model import DocumentStatus
 
 
@@ -10,6 +11,7 @@ class DocumentBase(BaseModel):
 class DocumentCreate(DocumentBase):
     storage_path: str
     owner_id: int
+    file_size: int
 
 
 class DocumentUpdate(BaseModel):
@@ -18,9 +20,10 @@ class DocumentUpdate(BaseModel):
     storage_path: Optional[str] = None
 
 
-class DocumentInDB(DocumentBase):
+class DocumentInDB(DocumentBase, TimestampMixin):
     id: int
     status: DocumentStatus
+    file_size: int
 
     class Config:
         from_attributes = True

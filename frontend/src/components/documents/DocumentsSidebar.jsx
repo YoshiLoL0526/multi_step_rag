@@ -18,14 +18,10 @@ const DocumentsSidebar = () => {
     const { showUploadModal, closeModal } = useModalActions();
     const [uploading, setUploading] = useState(false);
 
-    const handleUpload = async (file, onProgress) => {
+    const handleUpload = async (file) => {
         setUploading(true);
-        const result = await uploadDocument(file, onProgress);
+        const result = await uploadDocument(file);
         setUploading(false);
-
-        if (result.success) {
-            closeModal();
-        }
 
         return result;
     };
@@ -35,6 +31,7 @@ const DocumentsSidebar = () => {
             content: (
                 <DocumentUpload
                     onUpload={handleUpload}
+                    onClose={() => closeModal(modalId)}
                     loading={uploading}
                 />
             )

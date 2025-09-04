@@ -9,12 +9,8 @@ const ChatContainer = () => {
         messages,
         loading,
         sendingMessage,
-        sendMessage,
+        sendMessage
     } = useChat();
-
-    const handleSendMessage = async (messageData) => {
-        return await sendMessage(messageData);
-    };
 
     if (!activeConversationId) {
         return (
@@ -48,9 +44,9 @@ const ChatContainer = () => {
 
                 {/* Input area */}
                 <MessageInput
-                    onSendMessage={handleSendMessage}
-                    disabled={false}
                     sendingMessage={sendingMessage}
+                    onSendMessage={sendMessage}
+                    disabled={false}
                 />
             </div>
         </div>

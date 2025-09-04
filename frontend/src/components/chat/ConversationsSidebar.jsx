@@ -6,22 +6,14 @@ import { useModalActions } from '../../hooks/useModalActions';
 import ConversationForm from './ConversationForm'
 
 const ConversationsSidebar = () => {
-    const {
-        conversations,
-        activeConversationId,
-        createConversation,
-        selectConversation,
-        deleteConversation,
-        loading
-    } = useChat();
-
+    const { conversations, createConversation, selectConversation, deleteConversation, activeConversationId, loading } = useChat();
     const { showConfirmDialog, closeModal } = useModalActions();
 
     const handleShowCreateModal = () => {
         const modalId = showConfirmDialog({
             content: (
                 <ConversationForm
-                    createConversation={createConversation}
+                    onCreate={createConversation}
                     onClose={() => closeModal(modalId)}
                 />
             )
@@ -51,13 +43,15 @@ const ConversationsSidebar = () => {
             </div>
 
             {/* Conversations list */}
-            <ConversationsList
-                conversations={conversations}
-                activeConversationId={activeConversationId}
-                onSelectConversation={selectConversation}
-                onDeleteConversation={deleteConversation}
-                loading={loading}
-            />
+            <div className="flex-1 overflow-y-auto p-4">
+                <ConversationsList
+                    conversations={conversations}
+                    onDelete={deleteConversation}
+                    onSelect={selectConversation}
+                    activeConversationId={activeConversationId}
+                    loading={loading}
+                />
+            </div>
         </div>
     );
 };

@@ -100,7 +100,7 @@ const TypingIndicator = memo(() => (
                         ))}
                     </div>
                     <span className="text-xs text-neutral-500 ml-2">
-                        El asistente está escribiendo...
+                        Escribiendo...
                     </span>
                 </div>
             </div>

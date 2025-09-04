@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const AppContext = createContext();
 
@@ -14,19 +14,13 @@ export const AppProvider = ({ children }) => {
     const [selectedDocumentId, setSelectedDocumentId] = useState(null);
     const [activeConversationId, setActiveConversationId] = useState(null);
 
-    useEffect(() => {
-        if (selectedDocumentId) {
-            setActiveConversationId(null);
-        }
-    }, [selectedDocumentId]);
-
-    const selectDocument = (documentId) => {
+    const selectDocument = useCallback((documentId) => {
         setSelectedDocumentId(documentId);
-    };
+    }, []);
 
-    const selectConversation = (conversationId) => {
+    const selectConversation = useCallback((conversationId) => {
         setActiveConversationId(conversationId);
-    };
+    }, [setActiveConversationId]);
 
     return (
         <AppContext.Provider

@@ -33,7 +33,10 @@ class DocumentService:
             shutil.copyfileobj(file.file, buffer)
 
         doc_create = DocumentCreate(
-            filename=file.filename, storage_path=str(file_path), owner_id=user.id
+            filename=file.filename,
+            storage_path=str(file_path),
+            owner_id=user.id,
+            file_size=file.size,
         )
         document = self.document_crud.create(obj_in=doc_create)
 
@@ -65,6 +68,8 @@ class DocumentService:
             skip=pagination["skip"],
             limit=pagination["limit"],
             filters={"owner_id": user.id},
+            order_by="created_at",
+            desc=False,
         )
 
     def delete_document(self, user: User, document_id: int) -> Document:

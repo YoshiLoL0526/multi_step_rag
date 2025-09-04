@@ -4,25 +4,15 @@ import LoadingSpinner from '../ui/LoadingSpinner';
 import { useModalActions } from '../../hooks/useModalActions';
 import ConversationDelete from './ConversationDelete'
 
-const ConversationsList = ({
-    conversations,
-    activeConversationId,
-    onSelectConversation,
-    onDeleteConversation,
-    loading
-}) => {
+const ConversationsList = ({ conversations, activeConversationId, onSelect, onDelete, loading = false }) => {
     const [menuOpen, setMenuOpen] = useState(null);
     const { showConfirmDialog, closeModal } = useModalActions();
 
-    const handleConfirmDelete = useCallback(async (conversationId, modalId) => {
+    const handleConfirmDelete = useCallback(async (conversationId) => {
         if (!conversationId) return;
 
-        await onDeleteConversation(conversationId);
-
-        if (activeConversationId === conversationId) {
-            onSelectConversation(null);
-        }
-    }, [activeConversationId, onDeleteConversation, onSelectConversation]);
+        await onDelete(conversationId);
+    }, [onDelete]);
 
     const handleDelete = async (conversationId, e) => {
         e.stopPropagation();
@@ -33,7 +23,7 @@ const ConversationsList = ({
             content: (
                 <ConversationDelete
                     onClose={() => closeModal(modalId)}
-                    onConfirm={() => handleConfirmDelete(conversationId, modalId)}
+                    onConfirm={() => handleConfirmDelete(conversationId)}
                 />
             )
         });
@@ -75,7 +65,7 @@ const ConversationsList = ({
                                         : 'border-neutral-200 hover:border-neutral-300'
                                     }
                                 `}
-                                onClick={() => onSelectConversation(conversation.id)}
+                                onClick={() => onSelect(conversation.id)}
                             >
                                 <div className="flex-shrink-0 mr-3">
                                     <div className="h-8 w-8 bg-primary-100 rounded-full flex items-center justify-center">

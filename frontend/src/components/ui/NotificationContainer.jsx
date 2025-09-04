@@ -45,7 +45,7 @@ const NotificationContainer = () => {
         <>
             {/* Indicador de conexión */}
             {!isOnline && (
-                <div className="fixed top-0 left-0 right-0 bg-error-600 text-white p-2 text-center text-sm z-50">
+                <div className="fixed top-0 left-0 right-0 bg-error-600 text-white p-2 text-center text-sm z-60">
                     <div className="flex items-center justify-center space-x-2">
                         <WifiOff className="h-4 w-4" />
                         <span>Sin conexión a internet</span>
@@ -54,7 +54,7 @@ const NotificationContainer = () => {
             )}
 
             {/* Contenedor de notificaciones */}
-            <div className={`fixed top-4 right-4 z-40 space-y-2 ${!isOnline ? 'mt-12' : ''}`}>
+            <div className={`fixed top-4 right-4 z-60 space-y-2 ${!isOnline ? 'mt-12' : ''}`}>
                 {notifications.map((notification) => (
                     <div
                         key={notification.id}
