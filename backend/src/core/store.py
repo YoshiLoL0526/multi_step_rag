@@ -11,5 +11,6 @@ embedding = OpenAIEmbeddings(
 vector_store = Chroma(
     collection_name="documents",
     embedding_function=embedding,
-    persist_directory="./chroma_db",
+    host=settings.CHROMA_HOST,
+    port=settings.CHROMA_PORT,
 )

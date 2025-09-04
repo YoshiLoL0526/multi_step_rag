@@ -41,14 +41,21 @@ class DocumentService:
         document = self.document_crud.create(obj_in=doc_create)
 
         # TODO: This should be in a background task
-        self.vectorization_service.process_and_store_document(
-            file_path=str(file_path),
-            metadata={
-                "document_id": document.id,
-                "owner_id": user.id,
-                "filename": file.filename,
-            },
-        )
+        try:
+            self.vectorization_service.process_and_store_document(
+                file_path=str(file_path),
+                metadata={
+                    "document_id": document.id,
+                    "owner_id": user.id,
+                    "filename": file.filename,
+                },
+            )
+        except Exception as e:
+            self.document_crud.delete(document)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error ocurred uploading document",
+            )
 
         obj_in = DocumentUpdate(status=DocumentStatus.COMPLETED)
         self.document_crud.update(document, obj_in)

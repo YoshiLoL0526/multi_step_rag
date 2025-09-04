@@ -54,5 +54,9 @@ class Config(BaseSettings):
     OPENAI_API_KEY: str = Field(...)
     GOOGLE_API_KEY: str = Field(...)
 
+    # ChromaDB
+    CHROMA_HOST: str = "http://localhost"
+    CHROMA_PORT: int = 8001
+
 
 settings = Config()
