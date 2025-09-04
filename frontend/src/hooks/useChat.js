@@ -4,10 +4,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useErrorHandler } from './useErrorHandler';
 
 export const useChat = () => {
-    const { selectedDocumentId, activeConversationId, setActiveConversationId, selectConversation } = useAppContext();
-    const [conversations, setConversations] = useState([]);
-    const [messages, setMessages] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const { selectedDocumentId, activeConversationId, setActiveConversationId, selectConversation, setLoading, setConversations, setMessages, conversations, messages, loading } = useAppContext();
     const [sendingMessage, setSendingMessage] = useState(false);
     const { handleError } = useErrorHandler();
 
@@ -23,7 +20,7 @@ export const useChat = () => {
         }
         setLoading(false);
         return result
-    }, [handleError, selectedDocumentId]);
+    }, [handleError, selectedDocumentId, setConversations, setLoading]);
 
     const createConversation = async (title) => {
         if (!selectedDocumentId || !title.trim()) return null;
@@ -74,7 +71,7 @@ export const useChat = () => {
 
         setLoading(false)
         return result
-    }, [handleError]);
+    }, [handleError, setLoading, setMessages]);
 
     const sendMessage = async (messageData) => {
         if (!activeConversationId || !messageData.content.trim()) return null;
@@ -111,7 +108,7 @@ export const useChat = () => {
             setActiveConversationId(null);
             setMessages([]);
         }
-    }, [selectedDocumentId, fetchConversations, setActiveConversationId]);
+    }, [selectedDocumentId, fetchConversations, setActiveConversationId, setConversations, setMessages]);
 
     useEffect(() => {
         fetchMessages(activeConversationId);
