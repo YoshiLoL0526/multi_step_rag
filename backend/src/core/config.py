@@ -55,9 +55,9 @@ class Config(BaseSettings):
     GOOGLE_API_KEY: str = Field(...)
 
     # ChromaDB
+    CHROMA_PERSIST: bool = True
     CHROMA_HOST: str = "http://localhost"
     CHROMA_PORT: int = 8001
 
 
 settings = Config()
-print(settings)
