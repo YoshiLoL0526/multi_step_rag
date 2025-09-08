@@ -2,6 +2,18 @@
 
 A full-stack application implementing multi-step Retrieval Augmented Generation (RAG) with a FastAPI backend and a React frontend interface.
 
+## Features
+
+- 🔍 Multi-step retrieval process
+- 🤖 Advanced language model integration
+- 📊 Interactive React frontend
+- 🐳 Docker containerization
+- 📈 Real-time query processing
+
+## Screenshots
+
+![Example](images/chat-example.jpg)
+
 ## Backend
 
 The backend is built with FastAPI and implements the RAG pipeline.
@@ -74,7 +86,13 @@ cd frontend
 npm install
 ```
 
-3. Start the development server:
+3. Setup environment variables:
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+4. Start the development server:
 
 ```bash
 npm start
